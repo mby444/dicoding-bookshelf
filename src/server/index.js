@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
-import router from "./controller/index.js";
+import router from "../controller/index.js";
 
 dotenv.config();
 
@@ -12,5 +12,5 @@ app.use(bodyParser.json());
 app.use("/", router);
 
 app.listen(port, () => {
-    console.log(`Server running at port ${port}...`);
+    console.log(`Server berjalan pada port ${port}...`);
 });
