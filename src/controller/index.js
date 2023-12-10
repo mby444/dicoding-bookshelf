@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { getAllBooksRoute, getBookByIdRoute, saveBookRoute, updateBookRoute, deleteBookByIdRoute, notFoundRoute } from "../route/index.js";
+import {
+  getAllBooksRoute,
+  getBookByIdRoute,
+  saveBookRoute,
+  updateBookRoute,
+  deleteBookByIdRoute,
+  notFoundRoute,
+} from "../route/index.js";
 
 const router = Router();
 
