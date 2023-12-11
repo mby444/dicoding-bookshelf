@@ -31,7 +31,7 @@ export const readFromJSON = async (path) => {
   if (!isFileExists) {
     await fs.writeFile(path, "[]");
     return [];
-  };
+  }
   const json = await fs.readFile(path, { encoding: "utf-8" });
   const data = parseJSON(json) ?? [];
   await resetJSONWhenInvalid(json);
@@ -43,7 +43,7 @@ export const readFromJSONById = async (path, id) => {
   if (!isFileExists) {
     await fs.writeFile(path, "[]");
     return null;
-  };
+  }
   const allData = await readFromJSON(path);
   const data = allData.find((d) => d.id === id);
   return data;
@@ -86,14 +86,24 @@ export const removeUnknownProps = (reqBody = {}) => {
   return newReqBody;
 };
 
-export const filterByQuery = (allBooks, allDetails, { name, reading, finished }) => {
-  const queriedBooks = allBooks.filter((book)  => {
+export const filterByQuery = (
+  allBooks,
+  allDetails,
+  { name, reading, finished },
+) => {
+  const queriedBooks = allBooks.filter((book) => {
     const detail = allDetails.find((d) => d.id === book.id);
     const readingNum = String(Number(detail.reading));
     const finishedNum = String(Number(detail.finished));
-    const isMatchName = name ? book.name.toLowerCase().trim().includes(name?.toLowerCase()) : true;
-    const isMatchReading = ["0", "1"].includes(reading) ? reading === readingNum : true;
-    const isMatchFinished = ["0", "1"].includes(finished) ? finished === finishedNum : true;
+    const isMatchName = name
+      ? book.name.toLowerCase().trim().includes(name?.toLowerCase())
+      : true;
+    const isMatchReading = ["0", "1"].includes(reading)
+      ? reading === readingNum
+      : true;
+    const isMatchFinished = ["0", "1"].includes(finished)
+      ? finished === finishedNum
+      : true;
     return isMatchName && isMatchReading && isMatchFinished;
   });
   return queriedBooks;

@@ -8,23 +8,23 @@ import {
   notFoundRoute,
 } from "../route/index.js";
 
-const router = Router();
+const controller = Router();
 
 // POST
-router.post("/books", saveBookRoute);
+controller.post("/books", saveBookRoute);
 
 // GET
-router.get("/books", getAllBooksRoute);
-router.get("/books/:bookId", getBookByIdRoute);
+controller.get("/books", getAllBooksRoute);
+controller.get("/books/:bookId", getBookByIdRoute);
 
 // PUT
-router.put("/books/:bookId", updateBookRoute);
+controller.put("/books/:bookId", updateBookRoute);
 
 // DELETE
-router.delete("/books/:bookId", deleteBookByIdRoute);
+controller.delete("/books/:bookId", deleteBookByIdRoute);
 
 // Error route
-router.get("*", notFoundRoute);
+controller.get("*", notFoundRoute);
 
-export { router };
-export default router;
+export { controller };
+export default controller;
