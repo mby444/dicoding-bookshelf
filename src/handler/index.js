@@ -7,12 +7,15 @@ import {
   writeToJSON,
   updateJSONById,
   removeUnknownProps,
+  filterByQuery,
 } from "../tool/index.js";
 import { Responser } from "../tool/responser.js";
 
-export const getAllBooks = async () => {
+export const getAllBooks = async ({ query = {} }) => {
   const allBooks = await readFromJSON(booksPath);
-  return new Responser(200, "", allBooks);
+  const allDetails = await readFromJSON(detailsPath);
+  const queriedBooks = filterByQuery(allBooks, allDetails, query);
+  return new Responser(200, "", queriedBooks);
 };
 
 export const getBookById = async (id) => {
