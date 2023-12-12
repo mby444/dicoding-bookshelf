@@ -5,9 +5,10 @@ import {
   updateBook,
   deleteBookById,
 } from "../handler/index.js";
+import { HapiResponser } from "../tool/responser.js";
 
-export const getAllBooksRoute = async (req, res) => {
-  const { query } = req;
+export const getAllBooksRoute = async (req, h) => {
+  const { query } = req.query;
   try {
     const {
       error,
@@ -15,27 +16,15 @@ export const getAllBooksRoute = async (req, res) => {
       statusCode,
       data: allBooks,
     } = await getAllBooks({ query });
-    if (error)
-      return res.status(statusCode).json({
-        status: "fail",
-        message,
-      });
-    res.status(statusCode).json({
-      status: "success",
-      data: {
-        books: allBooks,
-      },
-    });
+    const hapier = new HapiResponser(h, statusCode, message);
+    if (error) return hapier.response();
+    return hapier.response({ books: allBooks });
   } catch (err) {
-    console.log(24, err);
-    res.status(500).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new HapiResponser(h, 500, err.message).response();
   }
 };
 
-export const getBookByIdRoute = async (req, res) => {
+export const getBookByIdRoute = async (req, h) => {
   const { bookId } = req.params;
   try {
     const {
@@ -44,99 +33,53 @@ export const getBookByIdRoute = async (req, res) => {
       message,
       data: book,
     } = await getBookById(bookId);
-    if (error)
-      return res.status(statusCode).json({
-        status: "fail",
-        message,
-      });
-    res.status(statusCode).json({
-      status: "success",
-      data: {
-        book,
-      },
-    });
+    const hapier = new HapiResponser(h, statusCode, message);
+    if (error) return hapier.response();
+    return hapier.response({ book });
   } catch (err) {
-    console.log(53, err);
-    res.status(500).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new HapiResponser(h, 500, err.message).response();
   }
 };
 
-export const saveBookRoute = async (req, res) => {
+export const saveBookRoute = async (req, h) => {
   try {
     const {
       error,
       statusCode,
       message,
       data: bookId,
-    } = await saveBook(req.body);
-    if (error)
-      return res.status(statusCode).json({
-        status: "fail",
-        message,
-      });
-    res.status(statusCode).json({
-      status: "success",
-      message: message,
-      data: {
-        bookId,
-      },
-    });
+    } = await saveBook(req.payload);
+    const hapier = new HapiResponser(h, statusCode, message);
+    if (error) return hapier.response();
+    return hapier.response({ bookId });
   } catch (err) {
-    console.log(82, err);
-    res.status(500).json({
-      status: "fail",
-      message: err.message,
-    });
+    console.log(err)
+    return new HapiResponser(h, 500, err.message).response();
   }
 };
 
-export const updateBookRoute = async (req, res) => {
+export const updateBookRoute = async (req, h) => {
   try {
     const { bookId } = req.params;
-    const { error, statusCode, message } = await updateBook(bookId, req.body);
-    if (error)
-      return res.status(statusCode).json({
-        status: "fail",
-        message,
-      });
-    res.status(statusCode).json({
-      status: "success",
-      message,
-    });
+    const { error, statusCode, message } = await updateBook(bookId, req.payload);
+    const hapier = new HapiResponser(h, statusCode, message);
+    return hapier.response();
   } catch (err) {
-    console.log(104, err);
-    res.status(500).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new HapiResponser(h, 500, err.message).response();
   }
 };
 
-export const deleteBookByIdRoute = async (req, res) => {
+export const deleteBookByIdRoute = async (req, h) => {
   try {
     const { bookId } = req.params;
     const { error, statusCode, message } = await deleteBookById(bookId);
-    if (error)
-      return res.status(statusCode).json({
-        status: "fail",
-        message,
-      });
-    res.status(statusCode).json({
-      status: "success",
-      message,
-    });
+    const hapier = new HapiResponser(h, statusCode, message);
+    return hapier.response();
   } catch (err) {
-    console.log(126, err);
-    res.status(500).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new HapiResponser(h, 500, err.message).response();
   }
 };
 
-export const notFoundRoute = (req, res) => {
+export const notFoundRoute = (req, h) => {
   res.sendStatus(404);
 };
