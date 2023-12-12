@@ -8,7 +8,7 @@ import {
 import { HapiResponser } from "../tool/responser.js";
 
 export const getAllBooksRoute = async (req, h) => {
-  const { query } = req.query;
+  const query = req.query;
   try {
     const {
       error,
@@ -17,8 +17,8 @@ export const getAllBooksRoute = async (req, h) => {
       data: allBooks,
     } = await getAllBooks({ query });
     const hapier = new HapiResponser(h, statusCode, message);
-    if (error) return hapier.response();
-    return hapier.response({ books: allBooks });
+    const hapierParam = error ? null : { books: allBooks };
+    return hapier.response(hapierParam);
   } catch (err) {
     return new HapiResponser(h, 500, err.message).response();
   }
@@ -34,8 +34,8 @@ export const getBookByIdRoute = async (req, h) => {
       data: book,
     } = await getBookById(bookId);
     const hapier = new HapiResponser(h, statusCode, message);
-    if (error) return hapier.response();
-    return hapier.response({ book });
+    const hapierParam = error ? null : { book };
+    return hapier.response(hapierParam);
   } catch (err) {
     return new HapiResponser(h, 500, err.message).response();
   }
@@ -50,10 +50,9 @@ export const saveBookRoute = async (req, h) => {
       data: bookId,
     } = await saveBook(req.payload);
     const hapier = new HapiResponser(h, statusCode, message);
-    if (error) return hapier.response();
-    return hapier.response({ bookId });
+    const hapierParam = error ? null : { bookId };
+    return hapier.response(hapierParam);
   } catch (err) {
-    console.log(err)
     return new HapiResponser(h, 500, err.message).response();
   }
 };
@@ -61,7 +60,7 @@ export const saveBookRoute = async (req, h) => {
 export const updateBookRoute = async (req, h) => {
   try {
     const { bookId } = req.params;
-    const { error, statusCode, message } = await updateBook(bookId, req.payload);
+    const { statusCode, message } = await updateBook(bookId, req.payload);
     const hapier = new HapiResponser(h, statusCode, message);
     return hapier.response();
   } catch (err) {
@@ -72,14 +71,10 @@ export const updateBookRoute = async (req, h) => {
 export const deleteBookByIdRoute = async (req, h) => {
   try {
     const { bookId } = req.params;
-    const { error, statusCode, message } = await deleteBookById(bookId);
+    const { statusCode, message } = await deleteBookById(bookId);
     const hapier = new HapiResponser(h, statusCode, message);
     return hapier.response();
   } catch (err) {
     return new HapiResponser(h, 500, err.message).response();
   }
-};
-
-export const notFoundRoute = (req, h) => {
-  res.sendStatus(404);
 };

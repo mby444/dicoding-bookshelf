@@ -4,7 +4,6 @@ import {
   saveBookRoute,
   updateBookRoute,
   deleteBookByIdRoute,
-  notFoundRoute,
 } from "../route/index.js";
 
 export const controllers = [
