@@ -40,7 +40,7 @@ export const saveBook = async ({
   if (readPage > pageCount)
     return new Responser(
       400,
-      "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount",
+      "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
     );
   const [oldBooks, oldDetails] = [
     await readFromJSON(booksPath),
@@ -87,7 +87,7 @@ export const updateBook = async (id, reqBody) => {
   if (readPage > pageCount)
     return new Responser(
       400,
-      "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount",
+      "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount"
     );
   const updatedBook = { id, name, publisher };
   const updatedAt = new Date().toISOString();

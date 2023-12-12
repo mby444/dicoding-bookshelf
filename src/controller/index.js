@@ -8,28 +8,28 @@ import {
 
 export const controllers = [
   {
-    method: 'GET',
-    path: '/books',
+    method: "GET",
+    path: "/books",
     handler: getAllBooksRoute,
   },
   {
-    method: 'GET',
-    path: '/books/{bookId}',
+    method: "GET",
+    path: "/books/{bookId}",
     handler: getBookByIdRoute,
   },
   {
-    method: 'POST',
-    path: '/books',
+    method: "POST",
+    path: "/books",
     handler: saveBookRoute,
   },
   {
-    method: 'PUT',
-    path: '/books/{bookId}',
+    method: "PUT",
+    path: "/books/{bookId}",
     handler: updateBookRoute,
   },
   {
-    method: 'DELETE',
-    path: '/books/{bookId}',
+    method: "DELETE",
+    path: "/books/{bookId}",
     handler: deleteBookByIdRoute,
   },
 ];

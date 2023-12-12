@@ -18,20 +18,22 @@ export class HapiResponser extends Responser {
 
   response(data = null) {
     const status = this.error ? "fail" : "success";
-    if (data){
-      return this.h.response({
+    if (data) {
+      return this.h
+        .response({
+          status,
+          message: this.message,
+          data,
+        })
+        .type(this.type)
+        .code(this.statusCode);
+    }
+    return this.h
+      .response({
         status,
         message: this.message,
-        data,
       })
       .type(this.type)
       .code(this.statusCode);
-    }
-    return this.h.response({
-        status,
-        message: this.message,
-    })
-    .type(this.type)
-    .code(this.statusCode);
   }
 }

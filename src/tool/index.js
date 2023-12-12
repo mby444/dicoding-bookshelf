@@ -89,7 +89,7 @@ export const removeUnknownProps = (reqBody = {}) => {
 export const filterByQuery = (
   allBooks,
   allDetails,
-  { name, reading, finished },
+  { name, reading, finished }
 ) => {
   const queriedBooks = allBooks.filter((book) => {
     const detail = allDetails.find((d) => d.id === book.id);
