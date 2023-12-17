@@ -1,31 +1,23 @@
 import uniqid from "uniqid";
+import { removeUnknownProps, filterByQuery } from "../tool/index.js";
 import {
-  booksPath,
-  detailsPath,
-  readFromJSON,
-  readFromJSONById,
-  writeToJSON,
-  updateJSONById,
-  removeUnknownProps,
-  filterByQuery,
-} from "../tool/index.js";
+  books as allBooks,
+  details as allDetails,
+} from "../../storage/bookshelf.js";
 import { Responser } from "../tool/responser.js";
 
-export const getAllBooks = async ({ query = {} }) => {
-  const allBooks = await readFromJSON(booksPath);
-  const allDetails = await readFromJSON(detailsPath);
+export const getAllBooks = ({ query = {} }) => {
   const queriedBooks = filterByQuery(allBooks, allDetails, query);
   return new Responser(200, "", queriedBooks);
 };
 
-export const getBookById = async (id) => {
-  const allDetails = await readFromJSON(detailsPath);
+export const getBookById = (id) => {
   const book = allDetails.find((b) => b.id === id);
   if (!book) return new Responser(404, "Buku tidak ditemukan");
   return new Responser(200, "", book);
 };
 
-export const saveBook = async ({
+export const saveBook = ({
   name,
   year,
   author,
@@ -35,17 +27,15 @@ export const saveBook = async ({
   readPage,
   reading,
 }) => {
-  if (!name?.trim()?.length)
+  const isValidName = typeof name === "string" ? !!name.trim() : false;
+  const isValidPageCount = readPage > pageCount;
+  if (!isValidName)
     return new Responser(400, "Gagal menambahkan buku. Mohon isi nama buku");
-  if (readPage > pageCount)
+  if (isValidPageCount)
     return new Responser(
       400,
-      "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
+      "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount",
     );
-  const [oldBooks, oldDetails] = [
-    await readFromJSON(booksPath),
-    await readFromJSON(detailsPath),
-  ];
   const id = uniqid();
   const finished = readPage === pageCount;
   const insertedAt = new Date().toISOString();
@@ -63,17 +53,18 @@ export const saveBook = async ({
     insertedAt,
     updatedAt,
   };
-  await writeToJSON(booksPath, [...oldBooks, newBookData]);
-  await writeToJSON(detailsPath, [...oldDetails, newDetailData]);
+  allBooks.push(newBookData);
+  allDetails.push(newDetailData);
   return new Responser(201, "Buku berhasil ditambahkan", id);
 };
 
-export const updateBook = async (id, reqBody) => {
+export const updateBook = (id, reqBody) => {
   const newReqBody = removeUnknownProps(reqBody);
-  const [book, detail] = [
-    await readFromJSONById(booksPath, id),
-    await readFromJSONById(detailsPath, id),
+  const [bookIndex, detailIndex] = [
+    allBooks.findIndex((b) => b.id === id),
+    allDetails.findIndex((d) => d.id === id),
   ];
+  const [book, detail] = [allBooks[bookIndex], allDetails[detailIndex]];
   if (!book || !detail)
     return new Responser(404, "Gagal memperbarui buku. Id tidak ditemukan");
   const {
@@ -87,27 +78,26 @@ export const updateBook = async (id, reqBody) => {
   if (readPage > pageCount)
     return new Responser(
       400,
-      "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount"
+      "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount",
     );
   const updatedBook = { id, name, publisher };
+  const finished = readPage === pageCount;
   const updatedAt = new Date().toISOString();
-  const updatedDetail = { ...updatedBook, ...newReqBody, updatedAt };
-  await updateJSONById(booksPath, id, updatedBook);
-  await updateJSONById(detailsPath, id, updatedDetail);
+  const updatedDetail = { ...detail, ...newReqBody, finished, updatedAt };
+  allBooks[bookIndex] = updatedBook;
+  allDetails[detailIndex] = updatedDetail;
   return new Responser(200, "Buku berhasil diperbarui");
 };
 
-export const deleteBookById = async (id) => {
-  const [allBooks, allDetails] = [
-    await readFromJSON(booksPath),
-    await readFromJSON(detailsPath),
-  ];
-  const book = !!allBooks.find((b) => b.id === id);
+export const deleteBookById = (id) => {
+  const book = allBooks.find((b) => b.id === id);
   if (!book)
     return new Responser(404, "Buku gagal dihapus. Id tidak ditemukan");
   const filteredBooks = allBooks.filter((b) => b.id !== id);
   const filteredDetails = allDetails.filter((d) => d.id !== id);
-  await writeToJSON(booksPath, filteredBooks);
-  await writeToJSON(detailsPath, filteredDetails);
+  allBooks.length = 0;
+  allDetails.length = 0;
+  allBooks.push(...filteredBooks);
+  allDetails.push(...filteredDetails);
   return new Responser(200, "Buku berhasil dihapus");
 };

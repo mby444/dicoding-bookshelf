@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 import Hapi from "@hapi/hapi";
-import controllers from "../controller/index.js";
+import { controllers } from "../controller/index.js";
 
 dotenv.config();
 
 const init = async () => {
-  const port = process.env.PORT ?? 9000;
+  const port = process.env.PORT || 9000;
   const server = Hapi.server({
     port,
     host: "localhost",

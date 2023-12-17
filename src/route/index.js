@@ -7,15 +7,15 @@ import {
 } from "../handler/index.js";
 import { HapiResponser } from "../tool/responser.js";
 
-export const getAllBooksRoute = async (req, h) => {
-  const query = req.query;
+export const getAllBooksRoute = (req, h) => {
+  const { query } = req;
   try {
     const {
       error,
       message,
       statusCode,
       data: allBooks,
-    } = await getAllBooks({ query });
+    } = getAllBooks({ query });
     const hapier = new HapiResponser(h, statusCode, message);
     const hapierParam = error ? null : { books: allBooks };
     return hapier.response(hapierParam);
@@ -24,15 +24,10 @@ export const getAllBooksRoute = async (req, h) => {
   }
 };
 
-export const getBookByIdRoute = async (req, h) => {
+export const getBookByIdRoute = (req, h) => {
   const { bookId } = req.params;
   try {
-    const {
-      error,
-      statusCode,
-      message,
-      data: book,
-    } = await getBookById(bookId);
+    const { error, statusCode, message, data: book } = getBookById(bookId);
     const hapier = new HapiResponser(h, statusCode, message);
     const hapierParam = error ? null : { book };
     return hapier.response(hapierParam);
@@ -41,14 +36,9 @@ export const getBookByIdRoute = async (req, h) => {
   }
 };
 
-export const saveBookRoute = async (req, h) => {
+export const saveBookRoute = (req, h) => {
   try {
-    const {
-      error,
-      statusCode,
-      message,
-      data: bookId,
-    } = await saveBook(req.payload);
+    const { error, statusCode, message, data: bookId } = saveBook(req.payload);
     const hapier = new HapiResponser(h, statusCode, message);
     const hapierParam = error ? null : { bookId };
     return hapier.response(hapierParam);
@@ -57,10 +47,10 @@ export const saveBookRoute = async (req, h) => {
   }
 };
 
-export const updateBookRoute = async (req, h) => {
+export const updateBookRoute = (req, h) => {
   try {
     const { bookId } = req.params;
-    const { statusCode, message } = await updateBook(bookId, req.payload);
+    const { statusCode, message } = updateBook(bookId, req.payload);
     const hapier = new HapiResponser(h, statusCode, message);
     return hapier.response();
   } catch (err) {
@@ -68,10 +58,10 @@ export const updateBookRoute = async (req, h) => {
   }
 };
 
-export const deleteBookByIdRoute = async (req, h) => {
+export const deleteBookByIdRoute = (req, h) => {
   try {
     const { bookId } = req.params;
-    const { statusCode, message } = await deleteBookById(bookId);
+    const { statusCode, message } = deleteBookById(bookId);
     const hapier = new HapiResponser(h, statusCode, message);
     return hapier.response();
   } catch (err) {
